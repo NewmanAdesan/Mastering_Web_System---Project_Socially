@@ -1,3 +1,5 @@
+import ModalToggle from "@/components/ModalToggle";
+import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 
@@ -6,12 +8,13 @@ export default function Home() {
     <div>
       <SignedOut>
           <SignInButton mode="modal">
-              <button className="bg-red-500">Sign in</button>
+              <Button>Sign in</Button>
           </SignInButton>
       </SignedOut>
       <SignedIn>
           <UserButton />
       </SignedIn>
+      <ModalToggle />
     </div>
   );
 }
