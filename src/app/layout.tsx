@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Navbar from "@/components/Navbar";
+import { Sidebar } from "lucide-react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -55,7 +56,7 @@ export default function RootLayout({
 
                       {/* Item #1: Sidebar, hidden on small screens, spans 3 columns on large screens */}
                       <div className="hidden lg:block lg:col-span-3"> 
-                        sidebar 
+                        <Sidebar />
                       </div>
 
                       {/* Item #2: Main content area, spans 9 columns on large screens */}
