@@ -1,11 +1,6 @@
 import CreatePost from "@/components/CreatePost";
-import ModalToggle from "@/components/ModalToggle";
-import { Button } from "@/components/ui/button";
 import WhoToFollow from "@/components/WhoToFollow";
-import { prisma } from "@/lib/prisma";
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
-import Image from "next/image";
 
 export default async function Home() { 
   const user = await currentUser();

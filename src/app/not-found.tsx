@@ -9,3 +9,6 @@ export default function NotFound() {
     </div>
   )
 }
+
+// Ensure no data fetching
+export const dynamic = 'force-static';
