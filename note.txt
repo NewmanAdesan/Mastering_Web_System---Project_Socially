@@ -1,138 +1,19 @@
 
-CONCEPTS
-* The Get Posts Frontend logic
-    - At the home page await a call to the getPosts server function.
-    - The getPosts server function returns a list of posts information.
-    - For each post information, render a PostCard component.
 
-* The Get Posts Backend logic
-    - Implement a server function `getPosts` to get the posts information.
-    - Utilize the Prisma findMany function to get the posts ordered by the createdAt field in descending order.
-    - Include Relations information about post that is needed:
-        - author: id, name, username, image
-        - comments: ordered by createdAt in accending order, including the author's id, name, username, and image
-        - likes: selecting the user id
-    - Select the counts of comments and likes for each post.
+Server Components (renders the html on server sends to client)
+Client Components ("use client") (renders the html/css on server sends js instructions to the client)
+File system based routing
+Server Actions 
+Route Handlers
 
-* The State Managment logic to toggle like a Posts
-    - Setup the `hasLiked state` which initial knows if the current user has liked the post before.
-    - Setup the `optimisticLikes state` which initial knows the number of likes for the post before the like action.
-    - Setup the `isLiking state` to track if the like action is in progress.
+Special Files
+    - page.tsx
+    - layout.tsx
+    - loading.tsx
+    - error.tsx
+    - not-found.tsx 
 
-* The Frontend logic to toggle like a Posts
-    - Setup the asynchronous handler function `handleLikePost` to handle the like action.
-    - Update the isLiking state before the like action.
-    - Update the hasLiked state before the like action (optimistic update).
-    - Update the optimisticLikes state before the like action (optimistic update).
-    - Await the call like action using a server action `toggleLike`.
-    - Revert the hasLiked state if there was an error.
-    - Revert the optimisticLikes state if there was an error.
-    - Finally update the isLiking state after the like action.
-
-    
-* The Backend logic to like a Posts
-    - Authenticate the action by using the clerkId of the user to get the database id of the user.
-    - Obtain the post information that the liked post refer to, selecting the authorId field.
-    - Unlike the post by deleting the corresponding like record if the user has liked the post before.
-    - Setup a database transaction to ensure the like action is atomic.
-        - Like the post by creating a new like record.
-        - Notify the user by creating a notification record (only if the user is liking another user's post).
-
-* Edit the getDbUserId server function to return null if a clerkId is not found instead of throwing an error (because we will be using this function in the frontend - homepage)
+QUESTIONS
+1. Based on our usage of Server Actions & Route Handlers, what is the difference between them?
 
 
-
-
-SPECIAL LEARNINGS
-* How to implement Optimistic Updates from scratch
-    const [hasLiked, setHasLiked] = useState(post.likes.some(like => like.userId === dbUserId));
-    const [optimisticLikes, setOptimisticLikes] = useState(post._count.likes);
-
-    ...
-
-
-    try {
-        ...
-        setHasLiked(prev => !prev);
-        setOptimisticLikes(prev => prev + (hasLiked ? -1 : 1));
-        ...
-    } catch (error) {
-        setHasLiked(post.likes.some(like => like.userId === dbUserId));
-        setOptimisticLikes(post._count.likes);
-    }
-
-
-* An Handy Type Extraction
-    type Posts = Awaited<ReturnType<typeof getPosts>>
-    type Post = Posts[number]
-
-    const PostCard = ({post, dbUserId}: {post: Post, dbUserId: string | null}) {
-        ...
-    }
-
-
-Noteworthy Technical Implementation Details
- const posts = await prisma.post.findMany({
-            orderBy: {
-                createdAt: "desc",
-            },
-            include: {
-                author: {
-                    select: {
-                        name: true,
-                        username: true,
-                        image: true,
-                    }
-                },
-                comments: {
-                    include: {
-                        author: {
-                            select: {
-                                id: true,
-                                name: true,
-                                username: true,
-                                image: true,
-                            }
-                        }
-                    },
-                    orderBy: {
-                        createdAt: "asc",
-                    }
-                },
-                likes: {
-                    select: {
-                        userId: true,
-                    }
-                },
-                _count: {
-                    select: {
-                        likes: true,
-                        comments: true,
-                    }
-                }
-            }
-        })
-
-
-Summary
-    - Frontend:
-        - Added home page post fetching via getPosts server function
-        - Implemented PostCard component for rendering posts with:
-            - Author details (name, username, image)
-            - Comment threads (ordered chronologically)
-            - Like counts and user like status
-        - Created optimistic like UI updates:
-            - hasLiked state to track user's like status
-            - optimisticLikes for instant feedback
-            - isLiking state to prevent duplicate actions
-
-    - Backend:
-        - Created getPosts server action with Prisma query:
-            - Posts ordered by createdAt (descending)
-            - Includes author, comments (with authors), and likes
-            - Returns _count for likes and comments
-        - Implemented toggleLike server action with:
-            - Clerk authentication to DB user ID conversion
-            - Atomic transaction for like/unlike
-            - Notification creation for others' posts
-        - Modified getDbUserId to return null instead of throwing
