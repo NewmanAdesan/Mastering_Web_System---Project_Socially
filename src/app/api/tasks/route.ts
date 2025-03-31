@@ -1,4 +1,6 @@
 
+// #### THIS FILE IS FOR LEARNING PURPOSES. IT IS NOT USED IN OUR APPLICATION ####
+
 interface Task {
     id: string;
     title: string;
