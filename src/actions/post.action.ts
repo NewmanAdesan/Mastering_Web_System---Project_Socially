@@ -78,11 +78,12 @@ export async function getPosts() {
 }
 
 export async function toggleLike(postId: string) {
-    // authenticate action
-    const userId = await getDbUserId();
-    if (!userId) return null;
 
     try {
+        // authenticate action
+        const userId = await getDbUserId();
+        if (!userId) return null;
+        
         // get information about the post
         const post = await prisma.post.findUnique({
             where: {
