@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 export async function createPost(content: string, imageUrl: string) {
     try {
         const userId = await getDbUserId();
-        if (!userId) return null;
+        if (!userId) return {success:false, error:"Failed to create post. Please login."};
 
         const post = await prisma.post.create({
             data: {
