@@ -1,6 +1,8 @@
 
 // #### THIS FILE IS FOR LEARNING PURPOSES. IT IS NOT USED IN OUR APPLICATION ####
 
+import { NextResponse } from "next/server";
+
 interface Task {
     id: string;
     title: string;
@@ -36,7 +38,7 @@ export const tasks: Task[] = [
 
 // get request handler
 export async function GET() {
-    return Response.json(tasks);
+    return NextResponse.json(tasks);
 }
 
 // post request handler
@@ -45,7 +47,7 @@ export async function POST(request: Request) {
         const body: CreateTaskRequest = await request.json();
 
         if (!body.title) {
-            return Response.json({ error: "Title is required" }, {status:400});
+            return NextResponse.json({ error: "Title is required" }, {status:400});
         }
 
         const newTask: Task = {
@@ -57,9 +59,9 @@ export async function POST(request: Request) {
 
         tasks.push(newTask);
 
-        return Response.json(newTask, {status: 201});
+        return NextResponse.json(newTask, {status: 201});
     } catch (error) {
-        return Response.json({ error: "Invalid request body" }, {status: 400});
+        return NextResponse.json({ error: "Invalid request body" }, {status: 400});
     }
 }
 
@@ -70,19 +72,19 @@ export async function DELETE(request: Request) {
         const id = searchParams.get("id");
 
         if (!id) {
-            return Response.json({ error: "ID is required" }, {status:400});
+            return NextResponse.json({ error: "ID is required" }, {status:400});
         }
 
         const taskIndex = tasks.findIndex(task => task.id === id);
 
         if (taskIndex === -1) {
-            return Response.json({ error: "Task not found" }, {status:404});
+            return NextResponse.json({ error: "Task not found" }, {status:404});
         }
 
         tasks.splice(taskIndex, 1);
 
-        return Response.json({ message: "Task deleted successfully" }, {status: 200});
+        return NextResponse.json({ message: "Task deleted successfully" }, {status: 200});
     } catch (error) {
-        return Response.json({ error: "Invalid request body" }, {status: 400});
+        return NextResponse.json({ error: "Invalid request body" }, {status: 400});
     }
 }
