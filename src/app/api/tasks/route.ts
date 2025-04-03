@@ -14,7 +14,7 @@ interface CreateTaskRequest {
     title: string;
 }
 
-export const tasks: Task[] = [
+const tasks: Task[] = [
     {
         id: "1",
         title: "Create a new project",
